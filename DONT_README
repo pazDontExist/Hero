@@ -1,0 +1,53 @@
+Ciao !
+Ecco come funziono:
+
+Sostanzialmente le cartelle dove mettere mano sono 2
+
+- application/page
+- module/
+
+Prima di cominciare
+da uno sguardo a configuration.php ed include/class per vedere cosa ce gia
+
+l'unica variabile che NON puoi utilizzare è $page (che porta il nome della pagina)
+per usare mysql ti basta fare:
+
+$mysqli->query("SELECT....");
+
+dentro ad una funzione, invece:
+
+function miaFunzione(){
+    global $mysqli;
+    //codice tuo
+}
+
+
+Crare una nuova pagina:
+
+crea in application/page un nuovo file:
+ie Esempio.php
+
+quindi avrai application/page/Esempio.php
+e dentro ci metti:
+<?php
+/**
+ * @TODO sono da trasformare in funzione di hero
+ */
+$Module = $GLOBALS['ModuleInfo'];
+if (isset($_GET['module']) && $_GET['module'] == $Module['name'] && in_array($_GET['action'], $Module['pages'])) {
+    include_once(MODULE_PATH . DS . ucfirst($page) . DS . $_GET['action'] . ".php" );
+} else {
+?>
+
+codice html, da qui puoi anche richiamare le funzioni e classi di hero e quelle create da te nel modulo
+senza fare import, require o che...
+
+<?php } ?>
+
+
+
+crea cartella in module con lo stesso nome:
+
+module/Esempio
+e dentro copia e incolla i file che trovi nel modulo Home
+apri mod_util.php e modificalo per quello che ti serve.
