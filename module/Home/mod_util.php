@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Informazioni sul modulo
- * @param string name Nome del modulo
- * @param string version Versione del modulo
- * @param string author Autore del modulo
- * @param array pages Elenco delle pagine appartenenti al modulo
+ * Module Info
+ * @param string name Module Name
+ * @param string version Version
+ * @param string author Who write this module
+ * @param array pages Allowed Pages
  */
 $Module = array(
     "name" => "mod_home",
