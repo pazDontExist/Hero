@@ -1,4 +1,9 @@
 <?php
+/**
+ * CSV Import
+ *
+ * Author(s):  Dont Remember who is original author
+ */
 class csvimport 
 { 
     private $fp; 

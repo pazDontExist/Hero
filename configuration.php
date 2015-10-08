@@ -1,9 +1,9 @@
 <?php
 
-/* * * DEVELOPING OPTION ** */
+/*** DEVELOPING OPTION ***/
 define('DEBUG', true);
 
-/*** !!! ATTENZIONE !!! NON TOCCARMI ***/
+/*** !!! WARNING !!! SOME PATH DEFINER ***/
 define('SITE_PATH', getcwd());
 define('DS', DIRECTORY_SEPARATOR);
 define('SITE', SITE_PATH . DS . 'application');
@@ -12,12 +12,12 @@ define('FPDF_FONTPATH', SITE_PATH . DS . 'include' . DS . 'font' . DS);
 /*** END DI COSE CHE NON PUOI TOCCARE ***/
 
 
-/*** PARAMETRI DATABASE ***/
+/*** DATABASE ***/
 
-define('DB_HOST', "localhost");   // IP/HOSTNAME del server mysql
-define('DB_USER', "root");        // Nome Utente Mysql
-define('DB_PASS', "");            // Password MySql
-define('DB_NAME', "dbname");         // Nome database
+define('DB_HOST', "localhost");
+define('DB_USER', "root");
+define('DB_PASS', "");
+define('DB_NAME', "dbname");
 
 /**************************/
 

@@ -3,8 +3,8 @@
 /**
  * HTML
  * Classe per la creazione dinamica di contenuti HTML
- * @Versione 1.0
- * @Data 2014-06-27
+ * @Versione 2.0
+ * @Data 2015-10-08
  * @author Antonio D'Angelo <dangeloantonio179@gmail.com>
  * @license http://creativecommons.org/licenses/by-nc-sa/4.0/ Licenza CC
  * @copyright (c) 2014, Antonio D'Angelo
@@ -12,17 +12,15 @@
 class html {
 
     /**
-     * Crea tabella dinamica in modo automatico
+     * Dinamic DataTable creation
      * 
-     * @param string $dataTableName ID da assegnare alla tabella non dimenticare inizializzazione jquery
-     * @param string $tableName Nome tabella mysql
-     * @param array $a_colName Titoli delle colonne
-     * @param array $a_fields Nome dei campi come db
+     * @param string $dataTableName HTML ID that have to be assigned
+     * @param string $tableName MySQL Table Name
+     * @param array $a_colName Columns Titles
+     * @param array $a_fields MySQL Table Fields Name
      * 
-     * @todo make a_colName and a_fields in an 1 array 
      */
     function dataTable($dataTableName, $tableName, $a_colName, $a_fields, $ids = null, $n_page = null) {
-        //mysql_select_db(DB_NAME,  mysql_connect(DB_HOST, DB_USER, DB_PASS));
         global $mysqli;
         global $page;
         ($n_page == null) ? $page = $page : $n_page = $n_page;
@@ -90,12 +88,26 @@ class html {
         $html = '<select id="' . $selectID . '"';
         ($attribute != "") ? $html .= " $attribute >" : $html .= " >";
     }
-    //$formID, $tableName, $a_colName, $a_fields, $n_page = null
-    function formIT($tbl, $ids){
+    
+    /**
+     * Crea Form a partire dei campi presenti nel db
+     * 
+     * @global object $mysqli Connessione al db
+     * @global string $page Nome Pagina attuale
+     * @param string $tbl Nome tabella nel DB
+     * @param string $ids Nome del campo ID (ovviamente da escludere nel form)
+     * @param string $formID id da assegnare al form
+     * @param string $btnID id da assegnare al pulsante
+     * @param string $onclick nome della tua funzione JS
+     * @todo Creazione automatica della funzione js
+     */
+    function formIT($tbl, $ids, $formID, $btnID, $onclick){
         global $mysqli;
         global $page;
         $columns = array();
         $query = "SELECT * FROM $tbl LIMIT 1";
+        
+        echo "<form id=\"$formID\" >";
         if($result = $mysqli->query($query)){
         // Get field information for all columns
             while ($column_info = $result->fetch_field()){
@@ -110,6 +122,49 @@ class html {
                     </div>';
             }
         }
+        echo '<div class="form-group">
+                      <button id="' . $btnID . '" type="button" onclick="' . $onclick . '" class="btn btn-success">Inserisci</button>
+                    </div> </form>';
+    }
+    
+    /**
+     * @TODO I HAVE TO END THIS !!!!
+     * @global object $mysqli
+     * @global string $page
+     * @param type $tbl
+     * @param type $ids
+     * @param type $formID
+     * @param type $btnID
+     * @param type $funcName
+     * @param type $method
+     */
+    function formITrev($tbl, $ids, $formID, $btnID, $funcName, $method){
+        global $mysqli;
+        global $page;
+        $columns = array();
+        $query = "SELECT * FROM $tbl LIMIT 1";
+        
+        echo "<form id=\"$formID\" >";
+        if($result = $mysqli->query($query)){
+        // Get field information for all columns
+            while ($column_info = $result->fetch_field()){
+                $columns[$column_info->name] = $column_info->type;
+            }
+        }
+        foreach ($columns as $fieldName=>$fieldType){
+            if($fieldName != $ids){
+                echo '<div class="form-group">
+                      <label>'. $fieldName .'</label>
+                      <input name="assistiti['.$fieldName.']" type="'. $this->_convertTypeField($fieldType) .'" class="form-control" placeholder="'.$fieldName.'">
+                    </div>';
+            }
+        }
+        echo '<div class="form-group">
+                      <button id="' . $btnID . '" type="button" onclick="' . $onclick . '" class="btn btn-success">Inserisci</button>
+                    </div> </form>';
+        
+        $hero = new hero();
+        $hero->creaFormJS($formID, $btnID, $page);
     }
     
     /**
@@ -159,5 +214,4 @@ class html {
         }
         return $caga;
     }
-
 }

@@ -12,30 +12,28 @@
 class hero {
 
     /**
-     * Controlla l'esistenza del modulo di una pagina
+     * Check if the called page have is own module and javascript
      * 
-     * @param string $data Nome della pagina
-     * @return page Inclusione della pagina /module/NomeModulo/mod_util.php  
-     * @TODO includere checkJS qui dentro 
+     * @param string $data Page name
+     * @return page Include page /module/NomeModulo/mod_util.php  
      */
     function checkModule($data, $pos) {
         if (file_exists(MODULE_PATH . DS . $data . DS . 'mod_util.php')) {
             include_once(MODULE_PATH . DS . $data . DS . 'mod_util.php');
         }
-    }
-    
-    function checkJS($data){
         if (file_exists(MODULE_PATH . DS . $data . DS . 'js_script.php')) {
             include_once(MODULE_PATH . DS . $data . DS . 'js_script.php');
         }
     }
+    
+
     /**
-     * Conversione di una data
-     * da formato italiano a inglese e viceversa
+     * CData Converter
+     * From DD/MM/YYYY to YYYY-MM-DD and vice-versa
      * 
-     * @param string $to "it" oppure "en"
-     * @param string $data Data da convertire
-     * @return string Data Convertita
+     * @param string $to "it" or "en"
+     * @param string $data Date to be converted
+     * @return string Converted Date
      * @uses dataConvert("en", "28/11/1989") return 1989-11-28
      * @uses dataConvert("it", "1989-11-28") return 28/11/1989
      */
@@ -55,12 +53,14 @@ class hero {
     }
 
     /**
-     * Funzione per vedere se un numero è compreso in
-     * un determinato intervallo
+     * PHP do not have a "between" function...so here it is
+     * (maybe exist...i don't know...and actually im to much afraid
+     * to ask :-P )
      * 
-     * @param int $number Numero da controllare
-     * @param int $min Start Range Controllo
-     * @param int $max End Range Controllo
+     * 
+     * @param int $number Number to check
+     * @param int $min Start
+     * @param int $max End
      * @return boolean 
      */
     function between($number, $min, $max) {
@@ -72,23 +72,24 @@ class hero {
     }
 
     /**
-     * Converte da TIMESTAMP a data e ora Italiana
+     * TIMESTAMP converter
      * 
      * @param string $tms
      * @return string Data e ora
-     * @example Entra questo => 1383651685 ed esce 05/11/2013 11:41:25
+     * @example deTimestamp("1383651685") -> 05/11/2013 11:41:25
      */
-    function deTimeStamp($tms) {
+    function deTimeStamp($tms, $format = "it") {
         $dirty = explode(" ", $tms);
 
-        $date = $this->dataConvert("it", $dirty[0]);
+        $date = $this->dataConvert($format, $dirty[0]);
         $time = $dirty[1];
 
         return $date . " " . $time;
     }
 
     /**
-     * Ritorna array con la differenza temporale tra 2 date
+     * Get DATE TIME difference
+     * very useful if you want to calculate exact age
      * 
      * @param string Data Inizio
      * @param string Data Fine
@@ -119,7 +120,7 @@ class hero {
     }
 
     /**
-     * Evidenzia comparazione stringhe
+     * Color String Comparison
      * 
      * @param string $oldString
      * @param string $newString
@@ -155,10 +156,13 @@ class hero {
     }
 
     /**
-     * Splitta campo nominativo in cognome e nome
+     * Usually happen that you have First Name and Surname on same row
+     * This Split surname and name
      * 
      * @param string $col1 Nominativo
      * @param string $divider Se separato con qualcosa
+     * @return string Splitted names
+     * @example nominativoSplit("DI MEO GIOVANNI ANTONIO") => surname[DI MEO], name[GIOVANNI ANTONIO]
      */
     function nominativoSplit($col1, $divider) {
         $cog = "";
@@ -201,62 +205,12 @@ class hero {
     }
     
         
-    /**
-     * Funzione SPERIMENTALE
-     * Utente online
-     * @global object $mysqli
-     * @param string $username
-     * @return bool True/False
-     */
-    function imAlive($username) {
-        global $mysqli;
-        $user_id = $this->getUserID($username);
-        if ($stmt = $mysqli->prepare("UPDATE aliveuser SET time = NOW() WHERE user_id = ? LIMIT 1")) {
-            $stmt->bind_param('s', $user_id);
-            $stmt->execute();
-                return true;
-        } else { return false;}
-    }
     
-    function getStat(){
-        global $mysqli;
-        $app = array();
-        $q = "SELECT MONTH( DATE ) AS rif, SUM( cont ) AS tot FROM marta.search_history GROUP BY MONTH( DATE )";
-        $do = $mysqli->query($q);
-        echo "[";
-        $s = "";
-        $cont = 0;
-        while ($r = $do->fetch_assoc()){
-            $cont++;
-            $app[] = $r;
-            $s .=  "[$cont, " . $r['tot'] . "],";
-        }
-        $s = substr($s, 0, -1);
-        echo $s . "]";
-    }
     
-    function monthConvert($n){
-        $name = "";
-        switch ($n){
-            case 1: $name = "Gennaio"; break;
-            case 2: $name = "Febbraio"; break;
-            case 3: $name = "Marzo"; break;
-            case 4: $name =  "Aprile"; break;
-            case 5: $name =  "Maggio"; break;
-            case 6: $name =  "Giugno"; break;
-            case 7: $name =  "Luglio"; break;
-            case 8: $name =  "Agosto"; break;
-            case 9: $name =  "Settembre"; break;
-            case 10: $name =  "Ottobre"; break;
-            case 11: $name = "Novembre"; break;
-            case 12: $name = "Dicembre"; break;
-        }
-        
-        return $name;
-    }
     
     /**
      * Echo del contenuto della cartella "files" 
+     * @todo Remember why this is here
      */
     function fileList(){
         if ($handle = opendir(SITE_PATH . DS . 'files')) {
