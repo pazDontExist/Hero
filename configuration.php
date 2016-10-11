@@ -15,9 +15,9 @@ define('FPDF_FONTPATH', SITE_PATH . DS . 'include' . DS . 'font' . DS);
 /*** DATABASE ***/
 
 define('DB_HOST', "localhost");
-define('DB_USER', "root");
-define('DB_PASS', "");
-define('DB_NAME', "dbname");
+define('DB_USER', "utente");
+define('DB_PASS', "password");
+define('DB_NAME', "hero");
 
 /**************************/
 

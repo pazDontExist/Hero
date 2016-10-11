@@ -39,11 +39,11 @@ class sec_login {
      */
     function login($user, $password, $mysqli) {
         // Usando statement sql 'prepared' non sarà possibile attuare un attacco di tipo SQL injection.
-        if ($stmt = $mysqli->prepare("SELECT id, nomeutente, nome, cognome, sesso, datanas, email, password, salt, status FROM utenti WHERE nomeutente = ? LIMIT 1")) {
+        if ($stmt = $mysqli->prepare("SELECT id, username, email, password, salt FROM users WHERE username = ? LIMIT 1")) {
             $stmt->bind_param('s', $user); // esegue il bind del parametro '$email'.
             $stmt->execute(); // esegue la query appena creata.
             $stmt->store_result();
-            $stmt->bind_result($user_id, $username, $nome, $cognome, $sesso, $datanas, $mail, $db_password, $salt, $status); // recupera il risultato della query e lo memorizza nelle relative variabili.
+            $stmt->bind_result($user_id, $username, $mail, $db_password, $salt); // recupera il risultato della query e lo memorizza nelle relative variabili.
             $stmt->fetch();
             $password = hash('sha512', $password . $salt); // codifica la password usando una chiave univoca.
             if ($stmt->num_rows == 1) { // se l'utente esiste
@@ -60,12 +60,7 @@ class sec_login {
                         $username = preg_replace("/<script\b[^>]*>(.*?)<\/script>/is", "", $username); // ci proteggiamo da un attacco XSS
                         $_SESSION['username'] = $username;
                         $_SESSION['login_string'] = hash('sha512', $password . $user_browser);
-                        $_SESSION['nome'] = $nome;
-                        $_SESSION['cognome'] = $cognome;
-                        $_SESSION['mail'] = $mail;
-                        $_SESSION['sesso'] = $sesso;
-                        $_SESSION['datanas'] = $datanas;
-                        $_SESSION['status'] = $status;
+
                         return true;
                     } else { // Password incorretta. Registriamo il tentativo fallito nel database.
                         $now = time();
@@ -99,7 +94,7 @@ class sec_login {
             $stmt->store_result();
             // Verifico l'esistenza di più di 5 tentativi di login falliti.
             if ($stmt->num_rows > 5) {
-                $mysqli->query("UPDATE utenti SET status = 4 WHERE user_id = $user_id ");
+                $mysqli->query("UPDATE users SET status = 4 WHERE user_id = $user_id ");
                 return true;
             } else {
                 return false;
@@ -121,7 +116,7 @@ class sec_login {
             $login_string = $_SESSION['login_string'];
             $username = $_SESSION['username'];
             $user_browser = $_SERVER['HTTP_USER_AGENT']; // reperisce la stringa 'user-agent' dell'utente.
-            if ($stmt = $mysqli->prepare("SELECT password FROM utenti WHERE id = ? LIMIT 1")) {
+            if ($stmt = $mysqli->prepare("SELECT password FROM users WHERE id = ? LIMIT 1")) {
                 $stmt->bind_param('i', $user_id); // esegue il bind del parametro '$user_id'.
                 $stmt->execute(); // Esegue la query creata.
                 $stmt->store_result();
